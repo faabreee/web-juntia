@@ -3,3 +3,393 @@
 export type ClientOptions = {
     baseUrl: 'http://localhost:8080' | (string & {});
 };
+
+export type ChangeRoleRequest = {
+    role: 'OWNER' | 'ADMIN' | 'MEMBER';
+};
+
+export type CreateOrganizationRequest = {
+    name: string;
+    type: 'PERSON' | 'COMPANY';
+    country: string;
+    currency: string;
+    timezone: string;
+};
+
+export type OrganizationResponse = {
+    id?: string;
+    name?: string;
+    type?: string;
+    country?: string;
+    currency?: string;
+    timezone?: string;
+    role?: 'OWNER' | 'ADMIN' | 'MEMBER';
+};
+
+export type InviteRequest = {
+    email: string;
+    role: 'OWNER' | 'ADMIN' | 'MEMBER';
+};
+
+export type InvitationResponse = {
+    id?: string;
+    email?: string;
+    role?: 'OWNER' | 'ADMIN' | 'MEMBER';
+    expiresAt?: string;
+};
+
+export type AcceptInvitationRequest = {
+    token: string;
+};
+
+export type TokenRequest = {
+    token: string;
+};
+
+export type ResetPasswordRequest = {
+    token: string;
+    password: string;
+};
+
+export type EmailRequest = {
+    email: string;
+};
+
+export type RegisterRequest = {
+    email: string;
+    password: string;
+    displayName: string;
+};
+
+export type LoginRequest = {
+    email: string;
+    password: string;
+};
+
+export type MeResponse = {
+    id?: string;
+    email?: string;
+    displayName?: string;
+};
+
+export type MemberResponse = {
+    userId?: string;
+    email?: string;
+    displayName?: string;
+    role?: 'OWNER' | 'ADMIN' | 'MEMBER';
+};
+
+export type ChangeRoleData = {
+    body: ChangeRoleRequest;
+    path: {
+        organizationId: string;
+        userId: string;
+    };
+    query?: never;
+    url: '/api/organizations/{organizationId}/members/{userId}/role';
+};
+
+export type ChangeRoleResponses = {
+    /**
+     * No Content
+     */
+    204: void;
+};
+
+export type ChangeRoleResponse = ChangeRoleResponses[keyof ChangeRoleResponses];
+
+export type ListMyOrganizationsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/organizations';
+};
+
+export type ListMyOrganizationsResponses = {
+    /**
+     * OK
+     */
+    200: Array<OrganizationResponse>;
+};
+
+export type ListMyOrganizationsResponse = ListMyOrganizationsResponses[keyof ListMyOrganizationsResponses];
+
+export type CreateOrganizationData = {
+    body: CreateOrganizationRequest;
+    path?: never;
+    query?: never;
+    url: '/api/organizations';
+};
+
+export type CreateOrganizationResponses = {
+    /**
+     * Created
+     */
+    201: OrganizationResponse;
+};
+
+export type CreateOrganizationResponse = CreateOrganizationResponses[keyof CreateOrganizationResponses];
+
+export type ListInvitationsData = {
+    body?: never;
+    path: {
+        organizationId: string;
+    };
+    query?: never;
+    url: '/api/organizations/{organizationId}/invitations';
+};
+
+export type ListInvitationsResponses = {
+    /**
+     * OK
+     */
+    200: Array<InvitationResponse>;
+};
+
+export type ListInvitationsResponse = ListInvitationsResponses[keyof ListInvitationsResponses];
+
+export type InviteMemberData = {
+    body: InviteRequest;
+    path: {
+        organizationId: string;
+    };
+    query?: never;
+    url: '/api/organizations/{organizationId}/invitations';
+};
+
+export type InviteMemberResponses = {
+    /**
+     * Created
+     */
+    201: InvitationResponse;
+};
+
+export type InviteMemberResponse = InviteMemberResponses[keyof InviteMemberResponses];
+
+export type AcceptInvitationData = {
+    body: AcceptInvitationRequest;
+    path?: never;
+    query?: never;
+    url: '/api/invitations/accept';
+};
+
+export type AcceptInvitationResponses = {
+    /**
+     * OK
+     */
+    200: OrganizationResponse;
+};
+
+export type AcceptInvitationResponse = AcceptInvitationResponses[keyof AcceptInvitationResponses];
+
+export type VerifyEmailData = {
+    body: TokenRequest;
+    path?: never;
+    query?: never;
+    url: '/api/auth/verify-email';
+};
+
+export type VerifyEmailResponses = {
+    /**
+     * No Content
+     */
+    204: void;
+};
+
+export type VerifyEmailResponse = VerifyEmailResponses[keyof VerifyEmailResponses];
+
+export type ResetPasswordData = {
+    body: ResetPasswordRequest;
+    path?: never;
+    query?: never;
+    url: '/api/auth/reset-password';
+};
+
+export type ResetPasswordResponses = {
+    /**
+     * No Content
+     */
+    204: void;
+};
+
+export type ResetPasswordResponse = ResetPasswordResponses[keyof ResetPasswordResponses];
+
+export type ResendVerificationData = {
+    body: EmailRequest;
+    path?: never;
+    query?: never;
+    url: '/api/auth/resend-verification';
+};
+
+export type ResendVerificationResponses = {
+    /**
+     * Accepted
+     */
+    202: unknown;
+};
+
+export type RegisterData = {
+    body: RegisterRequest;
+    path?: never;
+    query?: never;
+    url: '/api/auth/register';
+};
+
+export type RegisterResponses = {
+    /**
+     * Created
+     */
+    201: unknown;
+};
+
+export type LogoutData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/auth/logout';
+};
+
+export type LogoutResponses = {
+    /**
+     * No Content
+     */
+    204: void;
+};
+
+export type LogoutResponse = LogoutResponses[keyof LogoutResponses];
+
+export type LoginData = {
+    body: LoginRequest;
+    path?: never;
+    query?: never;
+    url: '/api/auth/login';
+};
+
+export type LoginResponses = {
+    /**
+     * OK
+     */
+    200: MeResponse;
+};
+
+export type LoginResponse = LoginResponses[keyof LoginResponses];
+
+export type ForgotPasswordData = {
+    body: EmailRequest;
+    path?: never;
+    query?: never;
+    url: '/api/auth/forgot-password';
+};
+
+export type ForgotPasswordResponses = {
+    /**
+     * Accepted
+     */
+    202: unknown;
+};
+
+export type GetOrganizationData = {
+    body?: never;
+    path: {
+        organizationId: string;
+    };
+    query?: never;
+    url: '/api/organizations/{organizationId}';
+};
+
+export type GetOrganizationResponses = {
+    /**
+     * OK
+     */
+    200: OrganizationResponse;
+};
+
+export type GetOrganizationResponse = GetOrganizationResponses[keyof GetOrganizationResponses];
+
+export type ListMembersData = {
+    body?: never;
+    path: {
+        organizationId: string;
+    };
+    query?: never;
+    url: '/api/organizations/{organizationId}/members';
+};
+
+export type ListMembersResponses = {
+    /**
+     * OK
+     */
+    200: Array<MemberResponse>;
+};
+
+export type ListMembersResponse = ListMembersResponses[keyof ListMembersResponses];
+
+export type MeData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/auth/me';
+};
+
+export type MeResponses = {
+    /**
+     * OK
+     */
+    200: MeResponse;
+};
+
+export type MeResponse2 = MeResponses[keyof MeResponses];
+
+export type CsrfData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/auth/csrf';
+};
+
+export type CsrfResponses = {
+    /**
+     * No Content
+     */
+    204: void;
+};
+
+export type CsrfResponse = CsrfResponses[keyof CsrfResponses];
+
+export type RemoveMemberData = {
+    body?: never;
+    path: {
+        organizationId: string;
+        userId: string;
+    };
+    query?: never;
+    url: '/api/organizations/{organizationId}/members/{userId}';
+};
+
+export type RemoveMemberResponses = {
+    /**
+     * No Content
+     */
+    204: void;
+};
+
+export type RemoveMemberResponse = RemoveMemberResponses[keyof RemoveMemberResponses];
+
+export type RevokeInvitationData = {
+    body?: never;
+    path: {
+        organizationId: string;
+        invitationId: string;
+    };
+    query?: never;
+    url: '/api/organizations/{organizationId}/invitations/{invitationId}';
+};
+
+export type RevokeInvitationResponses = {
+    /**
+     * No Content
+     */
+    204: void;
+};
+
+export type RevokeInvitationResponse = RevokeInvitationResponses[keyof RevokeInvitationResponses];

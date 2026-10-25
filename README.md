@@ -43,4 +43,4 @@ El cliente TypeScript se genera desde el OpenAPI del backend (debe estar corrien
 pnpm api:generate
 ```
 
-Salida en `src/lib/api/` (código generado, se versiona; no editar). La URL base sale de `NEXT_PUBLIC_API_URL` (ver `.env.example`).
+Salida en `src/lib/api/` (código generado, se versiona; no editar). El navegador llama a rutas relativas `/api/*`; `next.config.ts` las reenvía al backend (`API_URL`, por defecto `http://localhost:8080`), así la cookie de sesión es del mismo origen y no hace falta CORS.

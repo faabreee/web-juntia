@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Instrument_Sans } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Providers } from "@/components/providers";
 
 const instrumentSans = Instrument_Sans({subsets:['latin'],variable:'--font-sans'});
 
@@ -30,7 +31,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          {children}
+          <Providers>{children}</Providers>
         </ThemeProvider>
       </body>
     </html>
