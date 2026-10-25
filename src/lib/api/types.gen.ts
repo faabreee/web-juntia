@@ -164,8 +164,66 @@ export type InvitationResponse = {
     expiresAt?: string;
 };
 
+export type ScanRequest = {
+    scanId: string;
+    deviceId: string;
+    sessionId?: string;
+    token?: string;
+    code?: string;
+    ticketId?: string;
+};
+
+export type PreviousEntry = {
+    at: string;
+    deviceName: string;
+};
+
+export type ScanResponse = {
+    checkInId: string;
+    result: 'ACCEPTED' | 'REJECTED';
+    reason?: string;
+    ticket?: ScannedTicket;
+    session?: ScannedSession;
+    entriesTotal?: number;
+    entriesInSession?: number;
+    previousEntry?: PreviousEntry;
+    maxTotalUses?: number;
+    maxUsesPerSession?: number;
+    replayed?: boolean;
+};
+
+export type ScannedSession = {
+    id: string;
+    name: string;
+};
+
+export type ScannedTicket = {
+    id: string;
+    code: string;
+    ticketTypeName: string;
+    attendeeName?: string;
+    nominative?: boolean;
+};
+
+export type RevertRequest = {
+    reason: string;
+};
+
 export type CancelRequest = {
     reason?: string;
+};
+
+export type RegisterDeviceRequest = {
+    name: string;
+};
+
+export type DeviceResponse = {
+    id: string;
+    name: string;
+    registeredByName: string;
+    createdAt: string;
+    lastSeenAt?: string;
+    revoked?: boolean;
 };
 
 export type CreateOrderRequest = {
@@ -348,6 +406,45 @@ export type EventSummaryResponse = {
     sessionCount?: number;
     firstSessionAt?: string;
     lastSessionAt?: string;
+};
+
+export type AuditEntry = {
+    id: string;
+    result: string;
+    reason?: string;
+    method: string;
+    at: string;
+    ticketId?: string;
+    ticketCode?: string;
+    ticketTypeName?: string;
+    attendeeName?: string;
+    sessionId?: string;
+    deviceName: string;
+    validatorName: string;
+    revertedAt?: string;
+    revertedByName?: string;
+    revertReason?: string;
+};
+
+export type SummaryResponse = {
+    validTickets?: number;
+    ticketsEntered?: number;
+    entries?: number;
+    rejected?: number;
+    entriesBySession: {
+        [key: string]: number;
+    };
+};
+
+export type AttendeeResponse = {
+    ticketId: string;
+    code: string;
+    valid?: boolean;
+    ticketTypeName: string;
+    attendeeName?: string;
+    buyerName: string;
+    buyerEmailMasked: string;
+    entries?: number;
 };
 
 export type SetAttendeeData = {
@@ -885,6 +982,66 @@ export type UploadCoverResponses = {
 
 export type UploadCoverResponse = UploadCoverResponses[keyof UploadCoverResponses];
 
+export type ListCheckInsData = {
+    body?: never;
+    path: {
+        organizationId: string;
+        eventId: string;
+    };
+    query?: {
+        limit?: number;
+    };
+    url: '/api/organizations/{organizationId}/events/{eventId}/checkins';
+};
+
+export type ListCheckInsResponses = {
+    /**
+     * OK
+     */
+    200: Array<AuditEntry>;
+};
+
+export type ListCheckInsResponse = ListCheckInsResponses[keyof ListCheckInsResponses];
+
+export type ScanTicketData = {
+    body: ScanRequest;
+    path: {
+        organizationId: string;
+        eventId: string;
+    };
+    query?: never;
+    url: '/api/organizations/{organizationId}/events/{eventId}/checkins';
+};
+
+export type ScanTicketResponses = {
+    /**
+     * OK
+     */
+    200: ScanResponse;
+};
+
+export type ScanTicketResponse = ScanTicketResponses[keyof ScanTicketResponses];
+
+export type RevertCheckInData = {
+    body: RevertRequest;
+    path: {
+        organizationId: string;
+        eventId: string;
+        checkInId: string;
+    };
+    query?: never;
+    url: '/api/organizations/{organizationId}/events/{eventId}/checkins/{checkInId}/revert';
+};
+
+export type RevertCheckInResponses = {
+    /**
+     * No Content
+     */
+    204: void;
+};
+
+export type RevertCheckInResponse = RevertCheckInResponses[keyof RevertCheckInResponses];
+
 export type CancelEventData = {
     body?: CancelRequest;
     path: {
@@ -903,6 +1060,42 @@ export type CancelEventResponses = {
 };
 
 export type CancelEventResponse = CancelEventResponses[keyof CancelEventResponses];
+
+export type ListDevicesData = {
+    body?: never;
+    path: {
+        organizationId: string;
+    };
+    query?: never;
+    url: '/api/organizations/{organizationId}/devices';
+};
+
+export type ListDevicesResponses = {
+    /**
+     * OK
+     */
+    200: Array<DeviceResponse>;
+};
+
+export type ListDevicesResponse = ListDevicesResponses[keyof ListDevicesResponses];
+
+export type RegisterDeviceData = {
+    body: RegisterDeviceRequest;
+    path: {
+        organizationId: string;
+    };
+    query?: never;
+    url: '/api/organizations/{organizationId}/devices';
+};
+
+export type RegisterDeviceResponses = {
+    /**
+     * Created
+     */
+    201: DeviceResponse;
+};
+
+export type RegisterDeviceResponse = RegisterDeviceResponses[keyof RegisterDeviceResponses];
 
 export type ListMyOrdersData = {
     body?: never;
@@ -1258,6 +1451,46 @@ export type ListMembersResponses = {
 
 export type ListMembersResponse = ListMembersResponses[keyof ListMembersResponses];
 
+export type GetCheckInSummaryData = {
+    body?: never;
+    path: {
+        organizationId: string;
+        eventId: string;
+    };
+    query?: never;
+    url: '/api/organizations/{organizationId}/events/{eventId}/checkins/summary';
+};
+
+export type GetCheckInSummaryResponses = {
+    /**
+     * OK
+     */
+    200: SummaryResponse;
+};
+
+export type GetCheckInSummaryResponse = GetCheckInSummaryResponses[keyof GetCheckInSummaryResponses];
+
+export type SearchAttendeesData = {
+    body?: never;
+    path: {
+        organizationId: string;
+        eventId: string;
+    };
+    query: {
+        q: string;
+    };
+    url: '/api/organizations/{organizationId}/events/{eventId}/attendees';
+};
+
+export type SearchAttendeesResponses = {
+    /**
+     * OK
+     */
+    200: Array<AttendeeResponse>;
+};
+
+export type SearchAttendeesResponse = SearchAttendeesResponses[keyof SearchAttendeesResponses];
+
 export type GetOrderData = {
     body?: never;
     path: {
@@ -1400,3 +1633,22 @@ export type RevokeInvitationResponses = {
 };
 
 export type RevokeInvitationResponse = RevokeInvitationResponses[keyof RevokeInvitationResponses];
+
+export type RevokeDeviceData = {
+    body?: never;
+    path: {
+        organizationId: string;
+        deviceId: string;
+    };
+    query?: never;
+    url: '/api/organizations/{organizationId}/devices/{deviceId}';
+};
+
+export type RevokeDeviceResponses = {
+    /**
+     * No Content
+     */
+    204: void;
+};
+
+export type RevokeDeviceResponse = RevokeDeviceResponses[keyof RevokeDeviceResponses];
