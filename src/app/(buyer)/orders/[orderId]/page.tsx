@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { OrderStatusBadge } from "@/components/buyer/order-status-badge";
+import { PaymentPanel } from "@/components/buyer/payment-panel";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -107,10 +108,22 @@ export default function OrderPage() {
               </li>
             ))}
           </ul>
-          <div className="flex items-center justify-between border-t pt-4 text-lg font-semibold">
-            <span>Total</span>
-            <span>{formatPrice(o.totalMinor ?? 0, o.currency)}</span>
-          </div>
+          <dl className="space-y-1 border-t pt-4 text-sm">
+            <div className="flex items-center justify-between">
+              <dt className="text-muted-foreground">Subtotal</dt>
+              <dd>{formatPrice(o.subtotalMinor ?? 0, o.currency)}</dd>
+            </div>
+            {(o.feeMinor ?? 0) > 0 && o.feeMode === "PASSED_TO_BUYER" && (
+              <div className="flex items-center justify-between">
+                <dt className="text-muted-foreground">Cargo por servicio</dt>
+                <dd>{formatPrice(o.feeMinor ?? 0, o.currency)}</dd>
+              </div>
+            )}
+            <div className="flex items-center justify-between pt-1 text-lg font-semibold">
+              <dt>Total</dt>
+              <dd>{formatPrice(o.totalMinor ?? 0, o.currency)}</dd>
+            </div>
+          </dl>
 
           {pending && (
             <div className="space-y-3 rounded-lg border p-4" role="status">
@@ -124,19 +137,20 @@ export default function OrderPage() {
                 .
               </p>
               <p className="text-sm text-muted-foreground">Si no completas el pago a tiempo, la reserva se libera.</p>
-              <div className="flex flex-wrap gap-2">
-                <Button disabled title="El pago en línea estará disponible pronto">
-                  Pagar (próximamente)
-                </Button>
-                <Button variant="outline" onClick={() => cancel.mutate()} disabled={cancel.isPending}>
-                  Cancelar orden
-                </Button>
-              </div>
+              <Button variant="outline" onClick={() => cancel.mutate()} disabled={cancel.isPending}>
+                Cancelar orden
+              </Button>
             </div>
           )}
+          {pending && (o.totalMinor ?? 0) > 0 && <PaymentPanel order={o} />}
           {o.status === "PAID" && (
             <p className="rounded-lg border border-primary/40 p-4 text-sm" role="status">
-              {(o.totalMinor ?? 0) === 0 ? "Tus entradas gratuitas están confirmadas." : "Pago confirmado."} Tus boletos estarán disponibles pronto.
+              {(o.totalMinor ?? 0) === 0 ? "Tus entradas gratuitas están confirmadas." : "Pago confirmado. ¡Gracias por tu compra!"} Tus boletos estarán disponibles pronto.
+            </p>
+          )}
+          {o.status === "REFUNDED" && (
+            <p className="text-sm text-muted-foreground" role="status">
+              Esta orden fue reembolsada. La devolución puede tardar unos días en reflejarse en tu tarjeta.
             </p>
           )}
           {o.status === "EXPIRED" && (

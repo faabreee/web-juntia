@@ -115,6 +115,21 @@ export type OrganizationResponse = {
     role?: 'OWNER' | 'ADMIN' | 'MEMBER';
 };
 
+export type RefundRequest = {
+    amountMinor?: number;
+    reason: 'REQUESTED_BY_BUYER' | 'DUPLICATE' | 'FRAUDULENT' | 'EVENT_CANCELLED' | 'OTHER';
+    note?: string;
+};
+
+export type RefundResponse = {
+    id: string;
+    orderId: string;
+    amountMinor?: number;
+    status: 'PENDING' | 'SUCCEEDED' | 'FAILED';
+    reason: string;
+    failureMessage?: string;
+};
+
 export type InviteRequest = {
     email: string;
     role: 'OWNER' | 'ADMIN' | 'MEMBER';
@@ -150,15 +165,32 @@ export type ItemResponse = {
 
 export type OrderResponse = {
     id: string;
-    status: 'PENDING' | 'PAID' | 'EXPIRED' | 'CANCELLED';
+    status: 'PENDING' | 'PAID' | 'EXPIRED' | 'CANCELLED' | 'REFUNDED';
     eventSlug: string;
     eventTitle: string;
     currency: string;
     totalMinor?: number;
+    subtotalMinor?: number;
+    feeMinor?: number;
+    feeMode: string;
     createdAt: string;
     expiresAt?: string;
     paidAt?: string;
     items: Array<ItemResponse>;
+};
+
+export type PayRequest = {
+    sourceToken: string;
+};
+
+export type PaymentResponse = {
+    id: string;
+    orderId: string;
+    status: 'CREATED' | 'PENDING' | 'SUCCEEDED' | 'FAILED';
+    amountMinor?: number;
+    currency: string;
+    failureCode?: string;
+    failureMessage?: string;
 };
 
 export type AcceptInvitationRequest = {
@@ -223,6 +255,28 @@ export type PublicTicketTypeResponse = {
     maxTotalUses?: number;
     maxUsesPerSession?: number;
     soldOut?: boolean;
+};
+
+export type PaymentConfigResponse = {
+    provider: string;
+    publicKey?: string;
+};
+
+export type SaleResponse = {
+    orderId: string;
+    eventTitle: string;
+    buyerEmail: string;
+    buyerName: string;
+    status: string;
+    currency: string;
+    subtotalMinor?: number;
+    feeMinor?: number;
+    feeMode: string;
+    totalMinor?: number;
+    createdAt: string;
+    paidAt?: string;
+    refundedMinor?: number;
+    refundableMinor?: number;
 };
 
 export type MemberResponse = {
@@ -512,6 +566,28 @@ export type CreateVenueResponses = {
 
 export type CreateVenueResponse = CreateVenueResponses[keyof CreateVenueResponses];
 
+export type RefundOrderData = {
+    body: RefundRequest;
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        organizationId: string;
+        orderId: string;
+    };
+    query?: never;
+    url: '/api/organizations/{organizationId}/orders/{orderId}/refunds';
+};
+
+export type RefundOrderResponses = {
+    /**
+     * OK
+     */
+    200: RefundResponse;
+};
+
+export type RefundOrderResponse = RefundOrderResponses[keyof RefundOrderResponses];
+
 export type ListInvitationsData = {
     body?: never;
     path: {
@@ -799,6 +875,27 @@ export type CreateOrderResponses = {
 
 export type CreateOrderResponse = CreateOrderResponses[keyof CreateOrderResponses];
 
+export type PayData = {
+    body: PayRequest;
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path: {
+        orderId: string;
+    };
+    query?: never;
+    url: '/api/orders/{orderId}/payments';
+};
+
+export type PayResponses = {
+    /**
+     * OK
+     */
+    200: PaymentResponse;
+};
+
+export type PayResponse = PayResponses[keyof PayResponses];
+
 export type CancelOrderData = {
     body?: never;
     path: {
@@ -975,6 +1072,22 @@ export type GetPublicCoverResponses = {
 
 export type GetPublicCoverResponse = GetPublicCoverResponses[keyof GetPublicCoverResponses];
 
+export type PaymentConfigData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/payments/config';
+};
+
+export type PaymentConfigResponses = {
+    /**
+     * OK
+     */
+    200: PaymentConfigResponse;
+};
+
+export type PaymentConfigResponse2 = PaymentConfigResponses[keyof PaymentConfigResponses];
+
 export type GetOrganizationData = {
     body?: never;
     path: {
@@ -992,6 +1105,24 @@ export type GetOrganizationResponses = {
 };
 
 export type GetOrganizationResponse = GetOrganizationResponses[keyof GetOrganizationResponses];
+
+export type ListSalesData = {
+    body?: never;
+    path: {
+        organizationId: string;
+    };
+    query?: never;
+    url: '/api/organizations/{organizationId}/sales';
+};
+
+export type ListSalesResponses = {
+    /**
+     * OK
+     */
+    200: Array<SaleResponse>;
+};
+
+export type ListSalesResponse = ListSalesResponses[keyof ListSalesResponses];
 
 export type ListMembersData = {
     body?: never;
@@ -1028,6 +1159,25 @@ export type GetOrderResponses = {
 };
 
 export type GetOrderResponse = GetOrderResponses[keyof GetOrderResponses];
+
+export type GetPaymentData = {
+    body?: never;
+    path: {
+        orderId: string;
+        paymentId: string;
+    };
+    query?: never;
+    url: '/api/orders/{orderId}/payments/{paymentId}';
+};
+
+export type GetPaymentResponses = {
+    /**
+     * OK
+     */
+    200: PaymentResponse;
+};
+
+export type GetPaymentResponse = GetPaymentResponses[keyof GetPaymentResponses];
 
 export type MeData = {
     body?: never;

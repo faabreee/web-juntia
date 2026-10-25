@@ -114,7 +114,7 @@ export function TicketPurchase({ slug, timezone, sessions, ticketTypes }: Props)
           <Button className="w-full" onClick={onBuy} disabled={pending || mixedCurrency}>
             {pending ? "Reservando…" : user ? (totalMinor === 0 ? "Reservar entradas gratis" : "Reservar y continuar") : "Inicia sesión para comprar"}
           </Button>
-          <p className="text-xs text-muted-foreground">Reservamos tus entradas por unos minutos mientras completas la compra.</p>
+          <p className="text-xs text-muted-foreground">Reservamos tus entradas por unos minutos mientras completas la compra. Si corresponde, el cargo por servicio se muestra antes de pagar.</p>
         </div>
       )}
       {lines.length === 0 && error && <FormError message={error} />}

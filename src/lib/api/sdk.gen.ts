@@ -2,7 +2,7 @@
 
 import { type Client, type ClientMeta, formDataBodySerializer, type Options as Options2, type RequestResult, type TDataShape } from './client';
 import { client } from './client.gen';
-import type { AcceptInvitationData, AcceptInvitationResponses, AddSessionData, AddSessionResponses, CancelEventData, CancelEventResponses, CancelOrderData, CancelOrderResponses, ChangeRoleData, ChangeRoleResponses, CreateEventData, CreateEventResponses, CreateOrderData, CreateOrderResponses, CreateOrganizationData, CreateOrganizationResponses, CreateTicketTypeData, CreateTicketTypeResponses, CreateVenueData, CreateVenueResponses, CsrfData, CsrfResponses, DeleteEventData, DeleteEventResponses, DeleteSessionData, DeleteSessionResponses, DeleteTicketTypeData, DeleteTicketTypeResponses, DeleteVenueData, DeleteVenueResponses, ForgotPasswordData, ForgotPasswordResponses, GetCoverData, GetCoverResponses, GetEventData, GetEventResponses, GetOrderData, GetOrderResponses, GetOrganizationData, GetOrganizationResponses, GetPublicCoverData, GetPublicCoverResponses, GetPublicEventData, GetPublicEventResponses, InviteMemberData, InviteMemberResponses, ListEventsData, ListEventsResponses, ListInvitationsData, ListInvitationsResponses, ListMembersData, ListMembersResponses, ListMyOrdersData, ListMyOrdersResponses, ListMyOrganizationsData, ListMyOrganizationsResponses, ListTicketTypesData, ListTicketTypesResponses, ListVenuesData, ListVenuesResponses, LoginData, LoginResponses, LogoutData, LogoutResponses, MeData, MeResponses, PublishEventData, PublishEventResponses, RegisterData, RegisterResponses, RemoveCoverData, RemoveCoverResponses, RemoveMemberData, RemoveMemberResponses, ResendVerificationData, ResendVerificationResponses, ResetPasswordData, ResetPasswordResponses, RevokeInvitationData, RevokeInvitationResponses, UnpublishEventData, UnpublishEventResponses, UpdateEventData, UpdateEventResponses, UpdateSessionData, UpdateSessionResponses, UpdateTicketTypeData, UpdateTicketTypeResponses, UpdateVenueData, UpdateVenueResponses, UploadCoverData, UploadCoverResponses, VerifyEmailData, VerifyEmailResponses } from './types.gen';
+import type { AcceptInvitationData, AcceptInvitationResponses, AddSessionData, AddSessionResponses, CancelEventData, CancelEventResponses, CancelOrderData, CancelOrderResponses, ChangeRoleData, ChangeRoleResponses, CreateEventData, CreateEventResponses, CreateOrderData, CreateOrderResponses, CreateOrganizationData, CreateOrganizationResponses, CreateTicketTypeData, CreateTicketTypeResponses, CreateVenueData, CreateVenueResponses, CsrfData, CsrfResponses, DeleteEventData, DeleteEventResponses, DeleteSessionData, DeleteSessionResponses, DeleteTicketTypeData, DeleteTicketTypeResponses, DeleteVenueData, DeleteVenueResponses, ForgotPasswordData, ForgotPasswordResponses, GetCoverData, GetCoverResponses, GetEventData, GetEventResponses, GetOrderData, GetOrderResponses, GetOrganizationData, GetOrganizationResponses, GetPaymentData, GetPaymentResponses, GetPublicCoverData, GetPublicCoverResponses, GetPublicEventData, GetPublicEventResponses, InviteMemberData, InviteMemberResponses, ListEventsData, ListEventsResponses, ListInvitationsData, ListInvitationsResponses, ListMembersData, ListMembersResponses, ListMyOrdersData, ListMyOrdersResponses, ListMyOrganizationsData, ListMyOrganizationsResponses, ListSalesData, ListSalesResponses, ListTicketTypesData, ListTicketTypesResponses, ListVenuesData, ListVenuesResponses, LoginData, LoginResponses, LogoutData, LogoutResponses, MeData, MeResponses, PayData, PaymentConfigData, PaymentConfigResponses, PayResponses, PublishEventData, PublishEventResponses, RefundOrderData, RefundOrderResponses, RegisterData, RegisterResponses, RemoveCoverData, RemoveCoverResponses, RemoveMemberData, RemoveMemberResponses, ResendVerificationData, ResendVerificationResponses, ResetPasswordData, ResetPasswordResponses, RevokeInvitationData, RevokeInvitationResponses, UnpublishEventData, UnpublishEventResponses, UpdateEventData, UpdateEventResponses, UpdateSessionData, UpdateSessionResponses, UpdateTicketTypeData, UpdateTicketTypeResponses, UpdateVenueData, UpdateVenueResponses, UploadCoverData, UploadCoverResponses, VerifyEmailData, VerifyEmailResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -95,6 +95,15 @@ export const createVenue = <ThrowOnError extends boolean = false>(options: Optio
     }
 });
 
+export const refundOrder = <ThrowOnError extends boolean = false>(options: Options<RefundOrderData, ThrowOnError>): RequestResult<RefundOrderResponses, unknown, ThrowOnError> => (options.client ?? client).post<RefundOrderResponses, unknown, ThrowOnError>({
+    url: '/api/organizations/{organizationId}/orders/{orderId}/refunds',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
 export const listInvitations = <ThrowOnError extends boolean = false>(options: Options<ListInvitationsData, ThrowOnError>): RequestResult<ListInvitationsResponses, unknown, ThrowOnError> => (options.client ?? client).get<ListInvitationsResponses, unknown, ThrowOnError>({ url: '/api/organizations/{organizationId}/invitations', ...options });
 
 export const inviteMember = <ThrowOnError extends boolean = false>(options: Options<InviteMemberData, ThrowOnError>): RequestResult<InviteMemberResponses, unknown, ThrowOnError> => (options.client ?? client).post<InviteMemberResponses, unknown, ThrowOnError>({
@@ -175,6 +184,15 @@ export const createOrder = <ThrowOnError extends boolean = false>(options: Optio
     }
 });
 
+export const pay = <ThrowOnError extends boolean = false>(options: Options<PayData, ThrowOnError>): RequestResult<PayResponses, unknown, ThrowOnError> => (options.client ?? client).post<PayResponses, unknown, ThrowOnError>({
+    url: '/api/orders/{orderId}/payments',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
 export const cancelOrder = <ThrowOnError extends boolean = false>(options: Options<CancelOrderData, ThrowOnError>): RequestResult<CancelOrderResponses, unknown, ThrowOnError> => (options.client ?? client).post<CancelOrderResponses, unknown, ThrowOnError>({ url: '/api/orders/{orderId}/cancel', ...options });
 
 export const acceptInvitation = <ThrowOnError extends boolean = false>(options: Options<AcceptInvitationData, ThrowOnError>): RequestResult<AcceptInvitationResponses, unknown, ThrowOnError> => (options.client ?? client).post<AcceptInvitationResponses, unknown, ThrowOnError>({
@@ -246,11 +264,17 @@ export const getPublicEvent = <ThrowOnError extends boolean = false>(options: Op
 
 export const getPublicCover = <ThrowOnError extends boolean = false>(options: Options<GetPublicCoverData, ThrowOnError>): RequestResult<GetPublicCoverResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetPublicCoverResponses, unknown, ThrowOnError>({ url: '/api/public/events/{slug}/cover', ...options });
 
+export const paymentConfig = <ThrowOnError extends boolean = false>(options?: Options<PaymentConfigData, ThrowOnError>): RequestResult<PaymentConfigResponses, unknown, ThrowOnError> => (options?.client ?? client).get<PaymentConfigResponses, unknown, ThrowOnError>({ url: '/api/payments/config', ...options });
+
 export const getOrganization = <ThrowOnError extends boolean = false>(options: Options<GetOrganizationData, ThrowOnError>): RequestResult<GetOrganizationResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetOrganizationResponses, unknown, ThrowOnError>({ url: '/api/organizations/{organizationId}', ...options });
+
+export const listSales = <ThrowOnError extends boolean = false>(options: Options<ListSalesData, ThrowOnError>): RequestResult<ListSalesResponses, unknown, ThrowOnError> => (options.client ?? client).get<ListSalesResponses, unknown, ThrowOnError>({ url: '/api/organizations/{organizationId}/sales', ...options });
 
 export const listMembers = <ThrowOnError extends boolean = false>(options: Options<ListMembersData, ThrowOnError>): RequestResult<ListMembersResponses, unknown, ThrowOnError> => (options.client ?? client).get<ListMembersResponses, unknown, ThrowOnError>({ url: '/api/organizations/{organizationId}/members', ...options });
 
 export const getOrder = <ThrowOnError extends boolean = false>(options: Options<GetOrderData, ThrowOnError>): RequestResult<GetOrderResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetOrderResponses, unknown, ThrowOnError>({ url: '/api/orders/{orderId}', ...options });
+
+export const getPayment = <ThrowOnError extends boolean = false>(options: Options<GetPaymentData, ThrowOnError>): RequestResult<GetPaymentResponses, unknown, ThrowOnError> => (options.client ?? client).get<GetPaymentResponses, unknown, ThrowOnError>({ url: '/api/orders/{orderId}/payments/{paymentId}', ...options });
 
 export const me = <ThrowOnError extends boolean = false>(options?: Options<MeData, ThrowOnError>): RequestResult<MeResponses, unknown, ThrowOnError> => (options?.client ?? client).get<MeResponses, unknown, ThrowOnError>({ url: '/api/auth/me', ...options });
 
