@@ -4,8 +4,59 @@ export type ClientOptions = {
     baseUrl: 'http://localhost:8080' | (string & {});
 };
 
+export type VenueRequest = {
+    name: string;
+    address?: string;
+    city?: string;
+    country: string;
+    capacity?: number;
+};
+
+export type VenueResponse = {
+    id: string;
+    name: string;
+    address?: string;
+    city?: string;
+    country: string;
+    capacity?: number;
+};
+
 export type ChangeRoleRequest = {
     role: 'OWNER' | 'ADMIN' | 'MEMBER';
+};
+
+export type EventRequest = {
+    title: string;
+    description?: string;
+    timezone: string;
+};
+
+export type EventResponse = {
+    id: string;
+    slug: string;
+    title: string;
+    description?: string;
+    status: 'DRAFT' | 'PUBLISHED' | 'CANCELLED';
+    timezone: string;
+    hasCover?: boolean;
+    cancelReason?: string;
+    publishedAt?: string;
+    sessions: Array<SessionResponse>;
+};
+
+export type SessionResponse = {
+    id: string;
+    name: string;
+    startsAt: string;
+    endsAt: string;
+    venue?: VenueResponse;
+};
+
+export type SessionRequest = {
+    name: string;
+    startsAt: string;
+    endsAt: string;
+    venueId?: string;
 };
 
 export type CreateOrganizationRequest = {
@@ -36,6 +87,10 @@ export type InvitationResponse = {
     email?: string;
     role?: 'OWNER' | 'ADMIN' | 'MEMBER';
     expiresAt?: string;
+};
+
+export type CancelRequest = {
+    reason?: string;
 };
 
 export type AcceptInvitationRequest = {
@@ -72,12 +127,80 @@ export type MeResponse = {
     displayName?: string;
 };
 
+export type PublicEventResponse = {
+    slug: string;
+    title: string;
+    description?: string;
+    status: 'DRAFT' | 'PUBLISHED' | 'CANCELLED';
+    timezone: string;
+    organizationName: string;
+    coverUrl?: string;
+    cancelReason?: string;
+    sessions: Array<SessionResponse>;
+};
+
 export type MemberResponse = {
     userId?: string;
     email?: string;
     displayName?: string;
     role?: 'OWNER' | 'ADMIN' | 'MEMBER';
 };
+
+export type EventPageResponse = {
+    items: Array<EventSummaryResponse>;
+    page?: number;
+    size?: number;
+    total?: number;
+};
+
+export type EventSummaryResponse = {
+    id: string;
+    slug: string;
+    title: string;
+    status: 'DRAFT' | 'PUBLISHED' | 'CANCELLED';
+    hasCover?: boolean;
+    sessionCount?: number;
+    firstSessionAt?: string;
+    lastSessionAt?: string;
+};
+
+export type DeleteVenueData = {
+    body?: never;
+    path: {
+        organizationId: string;
+        venueId: string;
+    };
+    query?: never;
+    url: '/api/organizations/{organizationId}/venues/{venueId}';
+};
+
+export type DeleteVenueResponses = {
+    /**
+     * No Content
+     */
+    204: void;
+};
+
+export type DeleteVenueResponse = DeleteVenueResponses[keyof DeleteVenueResponses];
+
+export type UpdateVenueData = {
+    body: VenueRequest;
+    path: {
+        organizationId: string;
+        venueId: string;
+    };
+    query?: never;
+    url: '/api/organizations/{organizationId}/venues/{venueId}';
+};
+
+export type UpdateVenueResponses = {
+    /**
+     * OK
+     */
+    200: VenueResponse;
+};
+
+export type UpdateVenueResponse = UpdateVenueResponses[keyof UpdateVenueResponses];
 
 export type ChangeRoleData = {
     body: ChangeRoleRequest;
@@ -97,6 +220,103 @@ export type ChangeRoleResponses = {
 };
 
 export type ChangeRoleResponse = ChangeRoleResponses[keyof ChangeRoleResponses];
+
+export type DeleteEventData = {
+    body?: never;
+    path: {
+        organizationId: string;
+        eventId: string;
+    };
+    query?: never;
+    url: '/api/organizations/{organizationId}/events/{eventId}';
+};
+
+export type DeleteEventResponses = {
+    /**
+     * No Content
+     */
+    204: void;
+};
+
+export type DeleteEventResponse = DeleteEventResponses[keyof DeleteEventResponses];
+
+export type GetEventData = {
+    body?: never;
+    path: {
+        organizationId: string;
+        eventId: string;
+    };
+    query?: never;
+    url: '/api/organizations/{organizationId}/events/{eventId}';
+};
+
+export type GetEventResponses = {
+    /**
+     * OK
+     */
+    200: EventResponse;
+};
+
+export type GetEventResponse = GetEventResponses[keyof GetEventResponses];
+
+export type UpdateEventData = {
+    body: EventRequest;
+    path: {
+        organizationId: string;
+        eventId: string;
+    };
+    query?: never;
+    url: '/api/organizations/{organizationId}/events/{eventId}';
+};
+
+export type UpdateEventResponses = {
+    /**
+     * OK
+     */
+    200: EventResponse;
+};
+
+export type UpdateEventResponse = UpdateEventResponses[keyof UpdateEventResponses];
+
+export type DeleteSessionData = {
+    body?: never;
+    path: {
+        organizationId: string;
+        eventId: string;
+        sessionId: string;
+    };
+    query?: never;
+    url: '/api/organizations/{organizationId}/events/{eventId}/sessions/{sessionId}';
+};
+
+export type DeleteSessionResponses = {
+    /**
+     * No Content
+     */
+    204: void;
+};
+
+export type DeleteSessionResponse = DeleteSessionResponses[keyof DeleteSessionResponses];
+
+export type UpdateSessionData = {
+    body: SessionRequest;
+    path: {
+        organizationId: string;
+        eventId: string;
+        sessionId: string;
+    };
+    query?: never;
+    url: '/api/organizations/{organizationId}/events/{eventId}/sessions/{sessionId}';
+};
+
+export type UpdateSessionResponses = {
+    /**
+     * OK
+     */
+    200: SessionResponse;
+};
+
+export type UpdateSessionResponse = UpdateSessionResponses[keyof UpdateSessionResponses];
 
 export type ListMyOrganizationsData = {
     body?: never;
@@ -129,6 +349,42 @@ export type CreateOrganizationResponses = {
 };
 
 export type CreateOrganizationResponse = CreateOrganizationResponses[keyof CreateOrganizationResponses];
+
+export type ListVenuesData = {
+    body?: never;
+    path: {
+        organizationId: string;
+    };
+    query?: never;
+    url: '/api/organizations/{organizationId}/venues';
+};
+
+export type ListVenuesResponses = {
+    /**
+     * OK
+     */
+    200: Array<VenueResponse>;
+};
+
+export type ListVenuesResponse = ListVenuesResponses[keyof ListVenuesResponses];
+
+export type CreateVenueData = {
+    body: VenueRequest;
+    path: {
+        organizationId: string;
+    };
+    query?: never;
+    url: '/api/organizations/{organizationId}/venues';
+};
+
+export type CreateVenueResponses = {
+    /**
+     * Created
+     */
+    201: VenueResponse;
+};
+
+export type CreateVenueResponse = CreateVenueResponses[keyof CreateVenueResponses];
 
 export type ListInvitationsData = {
     body?: never;
@@ -165,6 +421,184 @@ export type InviteMemberResponses = {
 };
 
 export type InviteMemberResponse = InviteMemberResponses[keyof InviteMemberResponses];
+
+export type ListEventsData = {
+    body?: never;
+    path: {
+        organizationId: string;
+    };
+    query?: {
+        status?: 'DRAFT' | 'PUBLISHED' | 'CANCELLED';
+        q?: string;
+        from?: string;
+        to?: string;
+        page?: number;
+        size?: number;
+    };
+    url: '/api/organizations/{organizationId}/events';
+};
+
+export type ListEventsResponses = {
+    /**
+     * OK
+     */
+    200: EventPageResponse;
+};
+
+export type ListEventsResponse = ListEventsResponses[keyof ListEventsResponses];
+
+export type CreateEventData = {
+    body: EventRequest;
+    path: {
+        organizationId: string;
+    };
+    query?: never;
+    url: '/api/organizations/{organizationId}/events';
+};
+
+export type CreateEventResponses = {
+    /**
+     * Created
+     */
+    201: EventResponse;
+};
+
+export type CreateEventResponse = CreateEventResponses[keyof CreateEventResponses];
+
+export type UnpublishEventData = {
+    body?: never;
+    path: {
+        organizationId: string;
+        eventId: string;
+    };
+    query?: never;
+    url: '/api/organizations/{organizationId}/events/{eventId}/unpublish';
+};
+
+export type UnpublishEventResponses = {
+    /**
+     * OK
+     */
+    200: EventResponse;
+};
+
+export type UnpublishEventResponse = UnpublishEventResponses[keyof UnpublishEventResponses];
+
+export type AddSessionData = {
+    body: SessionRequest;
+    path: {
+        organizationId: string;
+        eventId: string;
+    };
+    query?: never;
+    url: '/api/organizations/{organizationId}/events/{eventId}/sessions';
+};
+
+export type AddSessionResponses = {
+    /**
+     * Created
+     */
+    201: SessionResponse;
+};
+
+export type AddSessionResponse = AddSessionResponses[keyof AddSessionResponses];
+
+export type PublishEventData = {
+    body?: never;
+    path: {
+        organizationId: string;
+        eventId: string;
+    };
+    query?: never;
+    url: '/api/organizations/{organizationId}/events/{eventId}/publish';
+};
+
+export type PublishEventResponses = {
+    /**
+     * OK
+     */
+    200: EventResponse;
+};
+
+export type PublishEventResponse = PublishEventResponses[keyof PublishEventResponses];
+
+export type RemoveCoverData = {
+    body?: never;
+    path: {
+        organizationId: string;
+        eventId: string;
+    };
+    query?: never;
+    url: '/api/organizations/{organizationId}/events/{eventId}/cover';
+};
+
+export type RemoveCoverResponses = {
+    /**
+     * No Content
+     */
+    204: void;
+};
+
+export type RemoveCoverResponse = RemoveCoverResponses[keyof RemoveCoverResponses];
+
+export type GetCoverData = {
+    body?: never;
+    path: {
+        organizationId: string;
+        eventId: string;
+    };
+    query?: never;
+    url: '/api/organizations/{organizationId}/events/{eventId}/cover';
+};
+
+export type GetCoverResponses = {
+    /**
+     * OK
+     */
+    200: Blob | File;
+};
+
+export type GetCoverResponse = GetCoverResponses[keyof GetCoverResponses];
+
+export type UploadCoverData = {
+    body?: {
+        file: Blob | File;
+    };
+    path: {
+        organizationId: string;
+        eventId: string;
+    };
+    query?: never;
+    url: '/api/organizations/{organizationId}/events/{eventId}/cover';
+};
+
+export type UploadCoverResponses = {
+    /**
+     * OK
+     */
+    200: EventResponse;
+};
+
+export type UploadCoverResponse = UploadCoverResponses[keyof UploadCoverResponses];
+
+export type CancelEventData = {
+    body?: CancelRequest;
+    path: {
+        organizationId: string;
+        eventId: string;
+    };
+    query?: never;
+    url: '/api/organizations/{organizationId}/events/{eventId}/cancel';
+};
+
+export type CancelEventResponses = {
+    /**
+     * OK
+     */
+    200: EventResponse;
+};
+
+export type CancelEventResponse = CancelEventResponses[keyof CancelEventResponses];
 
 export type AcceptInvitationData = {
     body: AcceptInvitationRequest;
@@ -287,6 +721,42 @@ export type ForgotPasswordResponses = {
      */
     202: unknown;
 };
+
+export type GetPublicEventData = {
+    body?: never;
+    path: {
+        slug: string;
+    };
+    query?: never;
+    url: '/api/public/events/{slug}';
+};
+
+export type GetPublicEventResponses = {
+    /**
+     * OK
+     */
+    200: PublicEventResponse;
+};
+
+export type GetPublicEventResponse = GetPublicEventResponses[keyof GetPublicEventResponses];
+
+export type GetPublicCoverData = {
+    body?: never;
+    path: {
+        slug: string;
+    };
+    query?: never;
+    url: '/api/public/events/{slug}/cover';
+};
+
+export type GetPublicCoverResponses = {
+    /**
+     * OK
+     */
+    200: Blob | File;
+};
+
+export type GetPublicCoverResponse = GetPublicCoverResponses[keyof GetPublicCoverResponses];
 
 export type GetOrganizationData = {
     body?: never;
