@@ -31,9 +31,10 @@ export function TicketPurchase({ slug, timezone, sessions, ticketTypes }: Props)
   const totalMinor = selected.reduce((sum, t) => sum + (t.priceMinor ?? 0) * quantities[t.id], 0);
   const mixedCurrency = selected.some((t) => t.currency !== currency);
 
-  function setQuantity(id: string, value: number, max: number) {
+  // Actualización funcional: dos clics seguidos siempre suman, aunque React aún no haya vuelto a renderizar.
+  function changeQuantity(id: string, delta: number, max: number) {
     setError(null);
-    setQuantities((q) => ({ ...q, [id]: Math.max(0, Math.min(max, value)) }));
+    setQuantities((q) => ({ ...q, [id]: Math.max(0, Math.min(max, (q[id] ?? 0) + delta)) }));
   }
 
   async function onBuy() {
@@ -87,13 +88,13 @@ export function TicketPurchase({ slug, timezone, sessions, ticketTypes }: Props)
                 <p className="font-semibold">{formatPrice(t.priceMinor ?? 0, t.currency)}</p>
                 {available && (
                   <div className="flex items-center gap-2" role="group" aria-label={`Cantidad de ${t.name}`}>
-                    <Button type="button" variant="outline" size="icon" aria-label={`Quitar una ${t.name}`} disabled={qty === 0} onClick={() => setQuantity(t.id, qty - 1, max)}>
+                    <Button type="button" variant="outline" size="icon" aria-label={`Quitar una ${t.name}`} disabled={qty === 0} onClick={() => changeQuantity(t.id, -1, max)}>
                       −
                     </Button>
                     <span className="w-6 text-center tabular-nums" aria-live="polite">
                       {qty}
                     </span>
-                    <Button type="button" variant="outline" size="icon" aria-label={`Agregar una ${t.name}`} disabled={qty >= max} onClick={() => setQuantity(t.id, qty + 1, max)}>
+                    <Button type="button" variant="outline" size="icon" aria-label={`Agregar una ${t.name}`} disabled={qty >= max} onClick={() => changeQuantity(t.id, 1, max)}>
                       +
                     </Button>
                   </div>

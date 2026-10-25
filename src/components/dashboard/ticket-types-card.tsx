@@ -33,6 +33,7 @@ type Draft = {
   salesStart: string;
   salesEnd: string;
   active: boolean;
+  nominative: boolean;
   earlyEntry: string;
   // reglas según plantilla
   singleSessionId: string;
@@ -60,6 +61,7 @@ function emptyDraft(template: Template, event: EventResponse): Draft {
     salesStart: "",
     salesEnd: "",
     active: true,
+    nominative: false,
     earlyEntry: "60",
     singleSessionId: firstSession,
     sessionIds: event.sessions.map((s) => s.id),
@@ -84,6 +86,7 @@ function draftFromType(t: TicketTypeResponse, event: EventResponse): Draft {
     salesStart: t.salesStart ? instantToZonedLocal(t.salesStart, event.timezone) : "",
     salesEnd: t.salesEnd ? instantToZonedLocal(t.salesEnd, event.timezone) : "",
     active: t.active ?? true,
+    nominative: t.nominative ?? false,
     earlyEntry: String(t.earlyEntryMinutes ?? 60),
     singleSessionId: t.sessionIds[0] ?? d.singleSessionId,
     sessionIds: t.scope === "SELECTED_SESSIONS" ? t.sessionIds : event.sessions.map((s) => s.id),
@@ -127,6 +130,7 @@ function toRequest(d: Draft, priceMinor: number, tz: string): TicketTypeRequest 
     salesEnd: d.salesEnd ? zonedLocalToInstant(d.salesEnd, tz) : undefined,
     earlyEntryMinutes: intOrUndefined(d.earlyEntry),
     active: d.active,
+    nominative: d.nominative,
     ...rule,
   };
 }
@@ -214,6 +218,7 @@ export function TicketTypesCard({ event, orgId, editable }: { event: EventRespon
                   {t.name}
                   <span className="text-sm font-normal text-muted-foreground">{formatPrice(t.priceMinor ?? 0, t.currency)}</span>
                   {!t.active && <Badge variant="secondary">Oculta</Badge>}
+                  {t.nominative && <Badge variant="outline">Nominativo</Badge>}
                   <Badge variant="outline">{SALE_LABEL[t.saleStatus]}</Badge>
                 </p>
                 <p className="text-sm text-muted-foreground">{describeAccess(t, event.sessions)}</p>
@@ -394,6 +399,12 @@ export function TicketTypesCard({ event, orgId, editable }: { event: EventRespon
                 </div>
               </fieldset>
 
+              <div className="flex items-center gap-2">
+                <Checkbox id="tt-nominative" checked={draft.nominative} onCheckedChange={(c) => set("nominative", c === true)} />
+                <Label htmlFor="tt-nominative" className="font-normal">
+                  Boleto nominativo (el comprador registra el nombre de cada asistente)
+                </Label>
+              </div>
               <div className="flex items-center gap-2">
                 <Checkbox id="tt-active" checked={draft.active} onCheckedChange={(c) => set("active", c === true)} />
                 <Label htmlFor="tt-active" className="font-normal">

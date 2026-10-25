@@ -4,6 +4,26 @@ export type ClientOptions = {
     baseUrl: 'http://localhost:8080' | (string & {});
 };
 
+export type AttendeeRequest = {
+    name: string;
+};
+
+export type TicketResponse = {
+    id: string;
+    orderId: string;
+    code: string;
+    status: 'VALID' | 'VOID';
+    attendeeName?: string;
+    nominative?: boolean;
+    ticketTypeName: string;
+    eventTitle: string;
+    eventSlug: string;
+    timezone: string;
+    firstSessionAt?: string;
+    lastSessionAt?: string;
+    qrToken?: string;
+};
+
 export type VenueRequest = {
     name: string;
     address?: string;
@@ -67,6 +87,7 @@ export type TicketTypeRequest = {
     maxUsesPerSession?: number;
     earlyEntryMinutes?: number;
     active?: boolean;
+    nominative?: boolean;
 };
 
 export type TicketTypeResponse = {
@@ -88,6 +109,7 @@ export type TicketTypeResponse = {
     active?: boolean;
     saleStatus: 'NOT_STARTED' | 'ON_SALE' | 'ENDED';
     taken?: number;
+    nominative?: boolean;
 };
 
 export type SessionRequest = {
@@ -227,6 +249,29 @@ export type MeResponse = {
     displayName?: string;
 };
 
+export type TicketDetailResponse = {
+    ticket: TicketResponse;
+    organizationName: string;
+    sessions: Array<TicketSessionResponse>;
+    maxTotalUses?: number;
+    maxUsesPerSession?: number;
+    earlyEntryMinutes?: number;
+};
+
+export type TicketSessionResponse = {
+    id: string;
+    name: string;
+    startsAt: string;
+    endsAt: string;
+    venue?: TicketVenueResponse;
+};
+
+export type TicketVenueResponse = {
+    name?: string;
+    address?: string;
+    city?: string;
+};
+
 export type PublicEventResponse = {
     slug: string;
     title: string;
@@ -255,6 +300,7 @@ export type PublicTicketTypeResponse = {
     maxTotalUses?: number;
     maxUsesPerSession?: number;
     soldOut?: boolean;
+    nominative?: boolean;
 };
 
 export type PaymentConfigResponse = {
@@ -303,6 +349,24 @@ export type EventSummaryResponse = {
     firstSessionAt?: string;
     lastSessionAt?: string;
 };
+
+export type SetAttendeeData = {
+    body: AttendeeRequest;
+    path: {
+        ticketId: string;
+    };
+    query?: never;
+    url: '/api/tickets/{ticketId}/attendee';
+};
+
+export type SetAttendeeResponses = {
+    /**
+     * OK
+     */
+    200: TicketResponse;
+};
+
+export type SetAttendeeResponse = SetAttendeeResponses[keyof SetAttendeeResponses];
 
 export type DeleteVenueData = {
     body?: never;
@@ -1036,6 +1100,58 @@ export type ForgotPasswordResponses = {
     202: unknown;
 };
 
+export type ListMyTicketsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/tickets';
+};
+
+export type ListMyTicketsResponses = {
+    /**
+     * OK
+     */
+    200: Array<TicketResponse>;
+};
+
+export type ListMyTicketsResponse = ListMyTicketsResponses[keyof ListMyTicketsResponses];
+
+export type GetTicketData = {
+    body?: never;
+    path: {
+        ticketId: string;
+    };
+    query?: never;
+    url: '/api/tickets/{ticketId}';
+};
+
+export type GetTicketResponses = {
+    /**
+     * OK
+     */
+    200: TicketDetailResponse;
+};
+
+export type GetTicketResponse = GetTicketResponses[keyof GetTicketResponses];
+
+export type DownloadTicketPdfData = {
+    body?: never;
+    path: {
+        ticketId: string;
+    };
+    query?: never;
+    url: '/api/tickets/{ticketId}/pdf';
+};
+
+export type DownloadTicketPdfResponses = {
+    /**
+     * OK
+     */
+    200: string;
+};
+
+export type DownloadTicketPdfResponse = DownloadTicketPdfResponses[keyof DownloadTicketPdfResponses];
+
 export type GetPublicEventData = {
     body?: never;
     path: {
@@ -1159,6 +1275,42 @@ export type GetOrderResponses = {
 };
 
 export type GetOrderResponse = GetOrderResponses[keyof GetOrderResponses];
+
+export type ListOrderTicketsData = {
+    body?: never;
+    path: {
+        orderId: string;
+    };
+    query?: never;
+    url: '/api/orders/{orderId}/tickets';
+};
+
+export type ListOrderTicketsResponses = {
+    /**
+     * OK
+     */
+    200: Array<TicketResponse>;
+};
+
+export type ListOrderTicketsResponse = ListOrderTicketsResponses[keyof ListOrderTicketsResponses];
+
+export type DownloadOrderTicketsPdfData = {
+    body?: never;
+    path: {
+        orderId: string;
+    };
+    query?: never;
+    url: '/api/orders/{orderId}/tickets/pdf';
+};
+
+export type DownloadOrderTicketsPdfResponses = {
+    /**
+     * OK
+     */
+    200: string;
+};
+
+export type DownloadOrderTicketsPdfResponse = DownloadOrderTicketsPdfResponses[keyof DownloadOrderTicketsPdfResponses];
 
 export type GetPaymentData = {
     body?: never;

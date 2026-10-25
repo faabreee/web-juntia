@@ -39,20 +39,24 @@ export function BuyerShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex flex-1 flex-col">
       <header className="border-b">
-        <div className="mx-auto flex h-14 max-w-3xl items-center justify-between gap-4 px-4">
-          <div className="flex items-center gap-4">
-            <Link href="/orders" className="font-semibold tracking-tight">
-              Juntia
+        <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 py-2">
+          <Link href="/tickets" className="font-semibold tracking-tight">
+            Juntia
+          </Link>
+          {/* En el celular los enlaces bajan a su propia fila; en pantallas anchas van junto a la marca. */}
+          <nav aria-label="Principal" className="order-3 flex w-full gap-4 overflow-x-auto whitespace-nowrap pb-1 text-sm sm:order-none sm:w-auto sm:flex-1 sm:pb-0">
+            <Link href="/tickets" className="text-muted-foreground hover:text-foreground">
+              Mis boletos
             </Link>
-            <Link href="/orders" className="text-sm text-muted-foreground hover:text-foreground">
+            <Link href="/orders" className="text-muted-foreground hover:text-foreground">
               Mis órdenes
             </Link>
-            <Link href="/dashboard" className="text-sm text-muted-foreground hover:text-foreground">
+            <Link href="/dashboard" className="text-muted-foreground hover:text-foreground">
               Panel de organizador
             </Link>
-          </div>
+          </nav>
           <div className="flex items-center gap-2">
-            <span className="hidden text-sm text-muted-foreground sm:inline">{user.displayName}</span>
+            <span className="hidden text-sm text-muted-foreground md:inline">{user.displayName}</span>
             <ThemeToggle />
             <Button variant="ghost" size="sm" onClick={onLogout}>
               Cerrar sesión

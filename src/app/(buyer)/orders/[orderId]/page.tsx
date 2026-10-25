@@ -11,8 +11,8 @@ import { PaymentPanel } from "@/components/buyer/payment-panel";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { cancelOrder, getOrder } from "@/lib/api";
-import type { OrderResponse } from "@/lib/api";
+import { cancelOrder, getOrder, listOrderTickets } from "@/lib/api";
+import type { OrderResponse, TicketResponse } from "@/lib/api";
 import { errorMessage } from "@/lib/api-client";
 import { formatPrice } from "@/lib/tickets";
 
@@ -45,6 +45,19 @@ export default function OrderPage() {
     },
     // Mientras está pendiente se revisa de vez en cuando: puede expirar o confirmarse.
     refetchInterval: (query) => (query.state.data?.status === "PENDING" ? 10_000 : false),
+  });
+
+  const paid = order.data?.status === "PAID";
+  // Los boletos se emiten al confirmarse el pago, pero pueden tardar un instante: se reintenta unos segundos.
+  const tickets = useQuery({
+    queryKey: ["order-tickets", orderId],
+    enabled: paid,
+    queryFn: async (): Promise<TicketResponse[]> => {
+      const { data, error } = await listOrderTickets({ path: { orderId } });
+      if (error || !data) throw new Error(errorMessage(error));
+      return data;
+    },
+    refetchInterval: (query) => ((query.state.data?.length ?? 0) === 0 ? 2000 : false),
   });
 
   const pending = order.data?.status === "PENDING";
@@ -144,9 +157,34 @@ export default function OrderPage() {
           )}
           {pending && (o.totalMinor ?? 0) > 0 && <PaymentPanel order={o} />}
           {o.status === "PAID" && (
-            <p className="rounded-lg border border-primary/40 p-4 text-sm" role="status">
-              {(o.totalMinor ?? 0) === 0 ? "Tus entradas gratuitas están confirmadas." : "Pago confirmado. ¡Gracias por tu compra!"} Tus boletos estarán disponibles pronto.
-            </p>
+            <div className="space-y-3 rounded-lg border border-primary/40 p-4" role="status">
+              <p className="text-sm">
+                {(o.totalMinor ?? 0) === 0 ? "Tus entradas gratuitas están confirmadas." : "Pago confirmado. ¡Gracias por tu compra!"} También te enviamos los boletos por correo.
+              </p>
+              {tickets.data && tickets.data.length > 0 ? (
+                <div className="space-y-2">
+                  <ul className="space-y-1 text-sm">
+                    {tickets.data.map((t) => (
+                      <li key={t.id}>
+                        <Link href={`/tickets/${t.id}`} className="underline underline-offset-4">
+                          {t.ticketTypeName} · {t.code}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="flex flex-wrap gap-2">
+                    <Link href={`/tickets/${tickets.data[0].id}`} className={buttonVariants()}>
+                      Ver mi boleto
+                    </Link>
+                    <a href={`/api/orders/${o.id}/tickets/pdf`} className={buttonVariants({ variant: "outline" })} download>
+                      Descargar PDF
+                    </a>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">Estamos preparando tus boletos…</p>
+              )}
+            </div>
           )}
           {o.status === "REFUNDED" && (
             <p className="text-sm text-muted-foreground" role="status">
