@@ -8,6 +8,7 @@ import { toast } from "sonner";
 
 import { FormError } from "@/components/auth/auth-card";
 import { EventStatusBadge } from "@/components/dashboard/event-status-badge";
+import { TicketTypesCard } from "@/components/dashboard/ticket-types-card";
 import { useDashboard } from "@/components/dashboard/org-context";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -350,6 +351,8 @@ export function EventEditorPage() {
           </ul>
         </CardContent>
       </Card>
+
+      <TicketTypesCard event={loaded} orgId={orgId} editable={editable} />
 
       <Dialog open={!!session} onOpenChange={(o) => !o && setSession(null)}>
         <DialogContent>

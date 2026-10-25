@@ -52,6 +52,43 @@ export type SessionResponse = {
     venue?: VenueResponse;
 };
 
+export type TicketTypeRequest = {
+    name: string;
+    description?: string;
+    template: 'SINGLE' | 'MULTI_DAY' | 'N_USES' | 'CUSTOM';
+    priceMinor?: number;
+    quota?: number;
+    maxPerOrder?: number;
+    salesStart?: string;
+    salesEnd?: string;
+    scope: 'ALL_SESSIONS' | 'SELECTED_SESSIONS';
+    sessionIds?: Array<string>;
+    maxTotalUses?: number;
+    maxUsesPerSession?: number;
+    earlyEntryMinutes?: number;
+    active?: boolean;
+};
+
+export type TicketTypeResponse = {
+    id: string;
+    name: string;
+    description?: string;
+    template: 'SINGLE' | 'MULTI_DAY' | 'N_USES' | 'CUSTOM';
+    priceMinor?: number;
+    currency: string;
+    quota?: number;
+    maxPerOrder?: number;
+    salesStart?: string;
+    salesEnd?: string;
+    scope: 'ALL_SESSIONS' | 'SELECTED_SESSIONS';
+    sessionIds: Array<string>;
+    maxTotalUses?: number;
+    maxUsesPerSession?: number;
+    earlyEntryMinutes?: number;
+    active?: boolean;
+    saleStatus: 'NOT_STARTED' | 'ON_SALE' | 'ENDED';
+};
+
 export type SessionRequest = {
     name: string;
     startsAt: string;
@@ -137,6 +174,23 @@ export type PublicEventResponse = {
     coverUrl?: string;
     cancelReason?: string;
     sessions: Array<SessionResponse>;
+    ticketTypes: Array<PublicTicketTypeResponse>;
+};
+
+export type PublicTicketTypeResponse = {
+    id: string;
+    name: string;
+    description?: string;
+    priceMinor?: number;
+    currency: string;
+    maxPerOrder?: number;
+    salesStart?: string;
+    salesEnd?: string;
+    saleStatus: 'NOT_STARTED' | 'ON_SALE' | 'ENDED';
+    scope: 'ALL_SESSIONS' | 'SELECTED_SESSIONS';
+    sessionIds: Array<string>;
+    maxTotalUses?: number;
+    maxUsesPerSession?: number;
 };
 
 export type MemberResponse = {
@@ -277,6 +331,46 @@ export type UpdateEventResponses = {
 };
 
 export type UpdateEventResponse = UpdateEventResponses[keyof UpdateEventResponses];
+
+export type DeleteTicketTypeData = {
+    body?: never;
+    path: {
+        organizationId: string;
+        eventId: string;
+        ticketTypeId: string;
+    };
+    query?: never;
+    url: '/api/organizations/{organizationId}/events/{eventId}/ticket-types/{ticketTypeId}';
+};
+
+export type DeleteTicketTypeResponses = {
+    /**
+     * No Content
+     */
+    204: void;
+};
+
+export type DeleteTicketTypeResponse = DeleteTicketTypeResponses[keyof DeleteTicketTypeResponses];
+
+export type UpdateTicketTypeData = {
+    body: TicketTypeRequest;
+    path: {
+        organizationId: string;
+        eventId: string;
+        ticketTypeId: string;
+    };
+    query?: never;
+    url: '/api/organizations/{organizationId}/events/{eventId}/ticket-types/{ticketTypeId}';
+};
+
+export type UpdateTicketTypeResponses = {
+    /**
+     * OK
+     */
+    200: TicketTypeResponse;
+};
+
+export type UpdateTicketTypeResponse = UpdateTicketTypeResponses[keyof UpdateTicketTypeResponses];
 
 export type DeleteSessionData = {
     body?: never;
@@ -483,6 +577,44 @@ export type UnpublishEventResponses = {
 };
 
 export type UnpublishEventResponse = UnpublishEventResponses[keyof UnpublishEventResponses];
+
+export type ListTicketTypesData = {
+    body?: never;
+    path: {
+        organizationId: string;
+        eventId: string;
+    };
+    query?: never;
+    url: '/api/organizations/{organizationId}/events/{eventId}/ticket-types';
+};
+
+export type ListTicketTypesResponses = {
+    /**
+     * OK
+     */
+    200: Array<TicketTypeResponse>;
+};
+
+export type ListTicketTypesResponse = ListTicketTypesResponses[keyof ListTicketTypesResponses];
+
+export type CreateTicketTypeData = {
+    body: TicketTypeRequest;
+    path: {
+        organizationId: string;
+        eventId: string;
+    };
+    query?: never;
+    url: '/api/organizations/{organizationId}/events/{eventId}/ticket-types';
+};
+
+export type CreateTicketTypeResponses = {
+    /**
+     * Created
+     */
+    201: TicketTypeResponse;
+};
+
+export type CreateTicketTypeResponse = CreateTicketTypeResponses[keyof CreateTicketTypeResponses];
 
 export type AddSessionData = {
     body: SessionRequest;

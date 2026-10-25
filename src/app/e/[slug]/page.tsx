@@ -3,7 +3,8 @@ import { notFound } from "next/navigation";
 
 import { ThemeToggle } from "@/components/theme-toggle";
 import type { PublicEventResponse } from "@/lib/api";
-import { formatRange } from "@/lib/datetime";
+import { formatInZone, formatRange } from "@/lib/datetime";
+import { describeAccess, formatPrice } from "@/lib/tickets";
 
 // Página pública: se renderiza en el servidor en cada visita (el organizador puede publicar o cancelar en cualquier momento).
 export const instant = false;
@@ -111,6 +112,33 @@ export default async function PublicEventPage({ params }: PageProps<"/e/[slug]">
           </ul>
           <p className="text-xs text-muted-foreground">Horario de {event.timezone}.</p>
         </section>
+
+        {event.ticketTypes.length > 0 && (
+          <section aria-labelledby="tickets" className="space-y-3">
+            <h2 id="tickets" className="text-xl font-semibold">
+              Entradas
+            </h2>
+            <ul className="divide-y rounded-lg border">
+              {event.ticketTypes.map((t) => (
+                <li key={t.id} className="flex items-start justify-between gap-4 p-4">
+                  <div className="space-y-1">
+                    <p className="font-medium">{t.name}</p>
+                    {t.description && <p className="text-sm">{t.description}</p>}
+                    <p className="text-sm text-muted-foreground">
+                      {describeAccess(t, event.sessions)}
+                    </p>
+                    {t.saleStatus === "NOT_STARTED" && t.salesStart && (
+                      <p className="text-xs text-muted-foreground">Venta desde {formatInZone(t.salesStart, event.timezone, { dateStyle: "medium", timeStyle: "short", timeZone: event.timezone })}</p>
+                    )}
+                    {t.saleStatus === "ENDED" && <p className="text-xs text-muted-foreground">Venta finalizada</p>}
+                  </div>
+                  <p className="shrink-0 font-semibold">{formatPrice(t.priceMinor ?? 0, t.currency)}</p>
+                </li>
+              ))}
+            </ul>
+            <p className="text-xs text-muted-foreground">La compra en línea estará disponible pronto.</p>
+          </section>
+        )}
       </div>
     </main>
   );
