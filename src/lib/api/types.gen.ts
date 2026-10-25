@@ -87,6 +87,7 @@ export type TicketTypeResponse = {
     earlyEntryMinutes?: number;
     active?: boolean;
     saleStatus: 'NOT_STARTED' | 'ON_SALE' | 'ENDED';
+    taken?: number;
 };
 
 export type SessionRequest = {
@@ -128,6 +129,36 @@ export type InvitationResponse = {
 
 export type CancelRequest = {
     reason?: string;
+};
+
+export type CreateOrderRequest = {
+    eventSlug: string;
+    items: Array<LineRequest>;
+};
+
+export type LineRequest = {
+    ticketTypeId: string;
+    quantity?: number;
+};
+
+export type ItemResponse = {
+    ticketTypeId: string;
+    name: string;
+    quantity?: number;
+    unitPriceMinor?: number;
+};
+
+export type OrderResponse = {
+    id: string;
+    status: 'PENDING' | 'PAID' | 'EXPIRED' | 'CANCELLED';
+    eventSlug: string;
+    eventTitle: string;
+    currency: string;
+    totalMinor?: number;
+    createdAt: string;
+    expiresAt?: string;
+    paidAt?: string;
+    items: Array<ItemResponse>;
 };
 
 export type AcceptInvitationRequest = {
@@ -191,6 +222,7 @@ export type PublicTicketTypeResponse = {
     sessionIds: Array<string>;
     maxTotalUses?: number;
     maxUsesPerSession?: number;
+    soldOut?: boolean;
 };
 
 export type MemberResponse = {
@@ -732,6 +764,59 @@ export type CancelEventResponses = {
 
 export type CancelEventResponse = CancelEventResponses[keyof CancelEventResponses];
 
+export type ListMyOrdersData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/orders';
+};
+
+export type ListMyOrdersResponses = {
+    /**
+     * OK
+     */
+    200: Array<OrderResponse>;
+};
+
+export type ListMyOrdersResponse = ListMyOrdersResponses[keyof ListMyOrdersResponses];
+
+export type CreateOrderData = {
+    body: CreateOrderRequest;
+    headers: {
+        'Idempotency-Key': string;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/orders';
+};
+
+export type CreateOrderResponses = {
+    /**
+     * OK
+     */
+    200: OrderResponse;
+};
+
+export type CreateOrderResponse = CreateOrderResponses[keyof CreateOrderResponses];
+
+export type CancelOrderData = {
+    body?: never;
+    path: {
+        orderId: string;
+    };
+    query?: never;
+    url: '/api/orders/{orderId}/cancel';
+};
+
+export type CancelOrderResponses = {
+    /**
+     * OK
+     */
+    200: OrderResponse;
+};
+
+export type CancelOrderResponse = CancelOrderResponses[keyof CancelOrderResponses];
+
 export type AcceptInvitationData = {
     body: AcceptInvitationRequest;
     path?: never;
@@ -925,6 +1010,24 @@ export type ListMembersResponses = {
 };
 
 export type ListMembersResponse = ListMembersResponses[keyof ListMembersResponses];
+
+export type GetOrderData = {
+    body?: never;
+    path: {
+        orderId: string;
+    };
+    query?: never;
+    url: '/api/orders/{orderId}';
+};
+
+export type GetOrderResponses = {
+    /**
+     * OK
+     */
+    200: OrderResponse;
+};
+
+export type GetOrderResponse = GetOrderResponses[keyof GetOrderResponses];
 
 export type MeData = {
     body?: never;

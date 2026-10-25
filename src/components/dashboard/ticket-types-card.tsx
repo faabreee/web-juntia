@@ -218,7 +218,7 @@ export function TicketTypesCard({ event, orgId, editable }: { event: EventRespon
                 </p>
                 <p className="text-sm text-muted-foreground">{describeAccess(t, event.sessions)}</p>
                 <p className="text-xs text-muted-foreground">
-                  {t.quota == null ? "Cupo ilimitado" : `Cupo ${t.quota}`} · máx. {t.maxPerOrder} por orden
+                  {t.quota == null ? `Cupo ilimitado · ${t.taken ?? 0} reservadas o vendidas` : `${t.taken ?? 0} de ${t.quota} reservadas o vendidas`} · máx. {t.maxPerOrder} por orden
                 </p>
               </div>
               {editable && (
