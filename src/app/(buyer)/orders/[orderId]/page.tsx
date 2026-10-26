@@ -11,7 +11,7 @@ import { PaymentPanel } from "@/components/buyer/payment-panel";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { cancelOrder, getOrder, listOrderTickets } from "@/lib/api";
+import { cancelOrder, getOrder, listOrderTickets, resendMyTickets } from "@/lib/api";
 import type { OrderResponse, TicketResponse } from "@/lib/api";
 import { errorMessage } from "@/lib/api-client";
 import { formatPrice } from "@/lib/tickets";
@@ -58,6 +58,15 @@ export default function OrderPage() {
       return data;
     },
     refetchInterval: (query) => ((query.state.data?.length ?? 0) === 0 ? 2000 : false),
+  });
+
+  const resend = useMutation({
+    mutationFn: async () => {
+      const { error } = await resendMyTickets({ path: { orderId } });
+      if (error) throw new Error(errorMessage(error));
+    },
+    onSuccess: () => toast.success("Te reenviamos los boletos por correo"),
+    onError: (e: Error) => toast.error(e.message),
   });
 
   const pending = order.data?.status === "PENDING";
@@ -179,6 +188,9 @@ export default function OrderPage() {
                     <a href={`/api/orders/${o.id}/tickets/pdf`} className={buttonVariants({ variant: "outline" })} download>
                       Descargar PDF
                     </a>
+                    <Button variant="outline" onClick={() => resend.mutate()} disabled={resend.isPending}>
+                      Reenviar por correo
+                    </Button>
                   </div>
                 </div>
               ) : (

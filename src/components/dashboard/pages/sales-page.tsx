@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { listSales, refundOrder } from "@/lib/api";
+import { listSales, refundOrder, resendTicketsAsOrganizer } from "@/lib/api";
 import type { RefundRequest, SaleResponse } from "@/lib/api";
 import { errorMessage } from "@/lib/api-client";
 import { formatPrice, minorToPriceText, priceToMinor } from "@/lib/tickets";
@@ -90,6 +90,15 @@ export function SalesPage() {
     },
   });
 
+  const resend = useMutation({
+    mutationFn: async (orderId: string) => {
+      const { error } = await resendTicketsAsOrganizer({ path: { organizationId: orgId, orderId } });
+      if (error) throw new Error(errorMessage(error));
+    },
+    onSuccess: () => toast.success("Reenviando los boletos al comprador"),
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   if (!organization) return null;
   if (!canManage) {
     return <p className="text-muted-foreground">Solo los propietarios y administradores pueden ver las ventas.</p>;
@@ -115,7 +124,7 @@ export function SalesPage() {
                 <TableHead className="text-right">Comisión</TableHead>
                 <TableHead className="text-right">Total</TableHead>
                 <TableHead className="text-right">Reembolsado</TableHead>
-                <TableHead className="w-28" />
+                <TableHead className="w-56" />
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -138,6 +147,11 @@ export function SalesPage() {
                   <TableCell className="text-right">{formatPrice(s.totalMinor ?? 0, s.currency)}</TableCell>
                   <TableCell className="text-right">{(s.refundedMinor ?? 0) > 0 ? formatPrice(s.refundedMinor ?? 0, s.currency) : "—"}</TableCell>
                   <TableCell className="text-right">
+                    {s.status === "PAID" && (
+                      <Button variant="ghost" size="sm" onClick={() => resend.mutate(s.orderId)} disabled={resend.isPending}>
+                        Reenviar boletos
+                      </Button>
+                    )}
                     {(s.refundableMinor ?? 0) > 0 && (
                       <Button variant="outline" size="sm" onClick={() => open(s)}>
                         Reembolsar

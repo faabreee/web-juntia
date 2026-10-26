@@ -41,12 +41,12 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     <DashboardProvider user={user} organizations={organizations}>
       <SidebarProvider>
         <AppSidebar />
-        <SidebarInset>
+        <SidebarInset className="min-w-0">
           <header className="flex h-14 items-center gap-2 border-b px-4">
             <SidebarTrigger />
             <Separator orientation="vertical" className="h-5" />
           </header>
-          <div className="flex-1 p-4 md:p-6">{children}</div>
+          <div className="min-w-0 flex-1 p-4 md:p-6">{children}</div>
         </SidebarInset>
       </SidebarProvider>
     </DashboardProvider>

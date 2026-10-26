@@ -1,7 +1,7 @@
 "use client";
 
 import { useQueryClient } from "@tanstack/react-query";
-import { Building2, CalendarDays, ChevronsUpDown, DoorOpen, LayoutDashboard, LogOut, MapPin, Plus, Receipt, Users } from "lucide-react";
+import { Building2, CalendarDays, ChevronsUpDown, DoorOpen, LayoutDashboard, LogOut, Mail, MapPin, Plus, Receipt, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -35,6 +35,7 @@ const NAV = [
   { href: "/events", label: "Eventos", icon: CalendarDays },
   { href: "/sales", label: "Ventas", icon: Receipt },
   { href: "/access", label: "Accesos", icon: DoorOpen },
+  { href: "/emails", label: "Correos", icon: Mail },
   { href: "/venues", label: "Lugares", icon: MapPin },
   { href: "/members", label: "Miembros", icon: Users },
 ];

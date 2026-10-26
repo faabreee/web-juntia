@@ -408,6 +408,19 @@ export type EventSummaryResponse = {
     lastSessionAt?: string;
 };
 
+export type NotificationResponse = {
+    id: string;
+    type: string;
+    recipientEmail: string;
+    status: string;
+    attempts?: number;
+    subject?: string;
+    lastError?: string;
+    createdAt: string;
+    sentAt?: string;
+    nextAttemptAt: string;
+};
+
 export type AuditEntry = {
     id: string;
     result: string;
@@ -727,6 +740,23 @@ export type CreateVenueResponses = {
 
 export type CreateVenueResponse = CreateVenueResponses[keyof CreateVenueResponses];
 
+export type ResendTicketsAsOrganizerData = {
+    body?: never;
+    path: {
+        organizationId: string;
+        orderId: string;
+    };
+    query?: never;
+    url: '/api/organizations/{organizationId}/orders/{orderId}/resend-tickets';
+};
+
+export type ResendTicketsAsOrganizerResponses = {
+    /**
+     * Accepted
+     */
+    202: unknown;
+};
+
 export type RefundOrderData = {
     body: RefundRequest;
     headers: {
@@ -748,6 +778,23 @@ export type RefundOrderResponses = {
 };
 
 export type RefundOrderResponse = RefundOrderResponses[keyof RefundOrderResponses];
+
+export type RetryNotificationData = {
+    body?: never;
+    path: {
+        organizationId: string;
+        notificationId: string;
+    };
+    query?: never;
+    url: '/api/organizations/{organizationId}/notifications/{notificationId}/retry';
+};
+
+export type RetryNotificationResponses = {
+    /**
+     * Accepted
+     */
+    202: unknown;
+};
 
 export type ListInvitationsData = {
     body?: never;
@@ -1132,6 +1179,22 @@ export type CreateOrderResponses = {
 
 export type CreateOrderResponse = CreateOrderResponses[keyof CreateOrderResponses];
 
+export type ResendMyTicketsData = {
+    body?: never;
+    path: {
+        orderId: string;
+    };
+    query?: never;
+    url: '/api/orders/{orderId}/resend-tickets';
+};
+
+export type ResendMyTicketsResponses = {
+    /**
+     * Accepted
+     */
+    202: unknown;
+};
+
 export type PayData = {
     body: PayRequest;
     headers: {
@@ -1450,6 +1513,28 @@ export type ListMembersResponses = {
 };
 
 export type ListMembersResponse = ListMembersResponses[keyof ListMembersResponses];
+
+export type ListNotificationsData = {
+    body?: never;
+    path: {
+        organizationId: string;
+        eventId: string;
+    };
+    query?: {
+        status?: string;
+        limit?: number;
+    };
+    url: '/api/organizations/{organizationId}/events/{eventId}/notifications';
+};
+
+export type ListNotificationsResponses = {
+    /**
+     * OK
+     */
+    200: Array<NotificationResponse>;
+};
+
+export type ListNotificationsResponse = ListNotificationsResponses[keyof ListNotificationsResponses];
 
 export type GetCheckInSummaryData = {
     body?: never;
